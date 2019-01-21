@@ -1,0 +1,53 @@
+/* pieces -- transparent with white outline */
+section {
+  display: flex;
+  flex-direction: column;
+  background-color: black;
+  border: 5px solid orange;
+  /* height: 50%;
+  width: 75%; */
+  color: white;
+}
+
+.game-screen {
+  display: flex;
+  flex-direction: row;
+  border: 1px solid orange;
+  height: 50%;
+  width: 75%;
+  color: white;
+}
+
+.game-board {
+  display: flex;
+  border: 1px solid orange;
+  height: 50%;
+  width: 75%;
+  color: white;
+}
+
+.support-info {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid orange;
+  color: white;
+}
+
+.next-piece {
+  display: flex;
+  border: 1px solid orange;
+  color: white;
+}
+
+.game-info {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid orange;
+  color: white;
+}
+
+row {
+  display: flex;
+  border: 1px solid orange;
+  color: white;
+}
