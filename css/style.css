@@ -70,16 +70,16 @@ section {
   border: 1px solid tomato;
 }
 
-.col-1,
-.col-2,
-.col-3,
-.col-4,
-.col-5,
-.col-6,
-.col-7,
-.col-8,
-.col-9,
-.col-10 {
+.c1,
+.c2,
+.c3,
+.c4,
+.c5,
+.c6,
+.c7,
+.c8,
+.c9,
+.c10 {
   height: 4%;
   width: 4.5%;
 }
@@ -88,11 +88,15 @@ section {
   border: 1px solid rgba(255, 255, 255, 0.5);
   height: 100%;
   width: 100%;
+  background-color: orange;
 }
 
-.has-square {
-  border: none;
+.occupied {
   background-color: white;
   height: 100%;
   width: 100%;
+}
+
+.test {
+  background-color: transparent;
 }
