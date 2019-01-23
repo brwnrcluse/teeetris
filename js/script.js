@@ -186,27 +186,46 @@ function move(somePiece) {
 
   // basic gameflow -- piece moving downwards
   // currently at same rate --> change rates if time to do so
-  var lastRow = Math.floor(somePiece.row - 1);
-  var currentRow = somePiece.row;
+  var lastRow = Math.floor(somePiece.row);
 
   if (
-    somePiece.row < 19 &&
-    !$(".c" + somePiece.column + " .r" + Math.floor(currentRow + 1)).hasClass(
+    somePiece.row < 1 &&
+    $(".c" + somePiece.column + " .r" + (somePiece.row + 1)).hasClass(
       "occupied"
     )
   ) {
+    console.log("game over");
+    return -1;
+  } else if (somePiece.row < 18) {
     somePiece.row += 0.3;
-    var nextRow = Math.floor(somePiece.row);
+    var checker = Math.floor(somePiece.row);
 
-    $(".c" + somePiece.column + " .r" + nextRow).addClass("occupied");
+    if (checker > lastRow) {
+      if (!$(".c" + somePiece.column + " .r" + checker).hasClass("occupied")) {
+        $(".c" + somePiece.column + " .r" + lastRow).removeClass("occupied");
+        $(".c" + somePiece.column + " .r" + checker).addClass("occupied");
+      } else {
+        somePiece.row = lastRow;
+        $(".c" + somePiece.column + " .r" + lastRow).addClass(
+          "occupied stable"
+        );
+        console.log(somePiece.row);
+        return false;
+      }
 
-    $(".c" + somePiece.column + " .r" + lastRow).removeClass("occupied");
+      if (checker == 18) {
+        somePiece.row = checker;
+        // $(".c" + somePiece.column + " .r" + lastRow).removeClass("occupied");
+        $(".c" + somePiece.column + " .r" + somePiece.row).addClass("stable");
+        console.log(somePiece.row);
+
+        return false;
+      }
+    } else {
+      return true;
+    }
+
     return true;
-  } else {
-    somePiece.row = Math.floor(somePiece.row);
-    $(".c" + somePiece.column + " .r" + lastRow).addClass("stable");
-    console.log(somePiece.row);
-    return false;
   }
 }
 
@@ -258,7 +277,7 @@ function drawGame(array, onePiece) {
       // set up a recursive loop (the function "drawingLoop" calls itself)
       drawGame(array, onePiece);
     });
-  } else {
+  } else if (moving === false) {
     // array[Math.floor(Math.random() * array.length)]
     requestAnimationFrame(function() {
       // set up a recursive loop (the function "drawingLoop" calls itself)
@@ -267,6 +286,8 @@ function drawGame(array, onePiece) {
       currentPiece = nextPiece;
       drawGame(pieceArray, currentPiece);
     });
+  } else {
+    console.log("game over");
   }
 }
 
@@ -295,10 +316,17 @@ document.onkeydown = function(event) {
     case 37: // left arrow --> moves piece left
       event.preventDefault();
       lastColumn = currentPiece.column;
-      currentPiece.column -= 1;
-      $(".c" + lastColumn + " .r" + Math.floor(currentPiece.row)).removeClass(
-        "occupied"
-      );
+      if (
+        !$(
+          ".c" + (lastColumn - 1) + " .r" + Math.floor(currentPiece.row)
+        ).hasClass("occupied")
+      ) {
+        currentPiece.column -= 1;
+        $(".c" + lastColumn + " .r" + Math.floor(currentPiece.row)).removeClass(
+          "occupied"
+        );
+      }
+
       break;
     // case 38: // up arrow --> rotates piece
     //   event.preventDefault();
@@ -306,11 +334,25 @@ document.onkeydown = function(event) {
     //   break;
     case 39: // right arrow --> moves piece right
       event.preventDefault();
-      currentPiece.column += 1;
+      lastColumn = currentPiece.column;
+      if (
+        !$(
+          ".c" + (lastColumn + 1) + " .r" + Math.floor(currentPiece.row)
+        ).hasClass("occupied")
+      ) {
+        currentPiece.column += 1;
+        $(".c" + lastColumn + " .r" + Math.floor(currentPiece.row)).removeClass(
+          "occupied"
+        );
+      }
       break;
     case 40: // down arrow
       event.preventDefault();
+      lastRow = currentPiece.row;
       currentPiece.row += 1;
+      $(".c" + currentPiece.column + " .r" + Math.floor(lastRow)).removeClass(
+        "occupied"
+      );
       break;
   }
 };
