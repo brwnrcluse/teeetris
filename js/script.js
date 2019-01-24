@@ -152,9 +152,58 @@ class Weird2Piece {
 // points     -> to reward the player for the manner in which they complete rows
 // dropRate   -> controls the speed at which a piece drops, based on player's performance
 
-function deleteRow(numberOfLines) {
+function updateLines(newLines) {
+  // retrieve currentLines from DOM
+  var currentLines = Number($(".current-lines").html());
+
+  // add newLines
+  var updatedLines = currentLines + newLines;
+
+  // level depends on lines, so call updateLevel
+  updateLevel(updatedLines);
+
+  // put sum back into DOM
+  $(".current-lines").html(updatedLines);
+}
+
+function updateScore(newLines) {
+  var newPoints = 0;
+  // translate newLines to points
+  switch (newLines) {
+    case 1:
+      newPoints = 40;
+      break;
+    case 2:
+      newPoints = 100;
+      break;
+    case 3:
+      newPoints = 300;
+      break;
+    case 4:
+      newPoints = 1200;
+      break;
+  }
+
+  // retrieve currentScore from DOM
+  var currentScore = Number($(".current-score").html());
+
+  // add points from newLines
+  var updatedScore = currentScore + newPoints;
+
+  // put sum back into DOM
+  $(".current-score").html(updatedScore);
+}
+
+function updateLevel(totalLines) {
+  // level updates every 10 completed lines
+  currentLevel = Math.floor(totalLines / 10);
+
+  // put currentLevel into DOM
+  $(".current-level").html(currentLevel);
+}
+
+function deleteRow() {
   // deleteRow  -> to delete a full row from the board
-  console.log("deleteRow in da houuuuuuuuuse");
 
   // populate rows in their current states to check in the next function
   var r1 = $(".game-board .r1");
@@ -200,7 +249,7 @@ function deleteRow(numberOfLines) {
   // check how many of the squares in each row are occupied
   // first, take one row
   // pass in numberOfLines -- the score counter that is incremented in the DOM each time a line is filled
-  numberOfLines += allRows.forEach(function(oneRow, numberOfLines) {
+  allRows.forEach(function(oneRow) {
     // an array full of jQuery elements within the row that are occupied
     var isOccupied = oneRow.filter(".occupied");
     var lineCounter = 0;
@@ -229,15 +278,23 @@ function deleteRow(numberOfLines) {
       // shift rows down
       shiftRows(deletedRow);
     }
-
-    return lineCounter;
+    updateLines(lineCounter);
   });
-  console.log(numberOfLines, "the number of lines");
-  return numberOfLines;
 }
 
-function shiftRows(oneRow) {
-  console.log(oneRow, "this is in shiftRows");
+function shiftRows(deletedRowNumber) {
+  console.log(deletedRowNumber, "shifting rows");
+
+  // for loop to handle rows
+  for (i = 1; i < 11; i++) {
+    // for loop to handle rows column-by-column
+    for (j = deletedRowNumber; j > 1; j--) {
+      if ($(".c" + i + " .r" + (j - 1)).hasClass("occupied")) {
+        $(".c" + i + " .r" + (j - 1)).removeClass("occupied");
+        $(".c" + i + " .r" + j).addClass("occupied");
+      }
+    }
+  }
 }
 
 // function points() {
@@ -245,12 +302,14 @@ function shiftRows(oneRow) {
 //   console.log("points in da houuuuuuuuuse");
 // }
 
+var dropSpeed = 0.3;
+
 function move(somePiece) {
   // controls the speed at which a piece drops, based on player's performance
   // takes player input and moves accordingly
 
   // basic gameflow -- piece moving downwards
-  // currently at same rate --> change rates if time to do so
+  // currently at same rate --> change rates according to level if time to do so
   var lastRow = Math.floor(somePiece.row);
 
   if (
@@ -259,9 +318,9 @@ function move(somePiece) {
       "occupied"
     )
   ) {
-    return "game over";
-  } else if (somePiece.row < 18) {
-    somePiece.row += 0.3;
+    return -1;
+  } else if (somePiece.row <= 18) {
+    somePiece.row += dropSpeed;
     var checker = Math.floor(somePiece.row);
 
     if (checker > lastRow) {
@@ -273,7 +332,6 @@ function move(somePiece) {
         $(".c" + somePiece.column + " .r" + lastRow).addClass(
           "occupied stable"
         );
-        console.log(somePiece.row);
         return false;
       }
 
@@ -283,15 +341,13 @@ function move(somePiece) {
         $(".c" + somePiece.column + " .r" + somePiece.row).addClass(
           "occupied stable"
         );
-        console.log(somePiece.row);
-
         return false;
       }
     } else {
       return true;
     }
 
-    return true;
+    // return true;
   }
 }
 
@@ -339,18 +395,13 @@ function drawGame(array, onePiece) {
 
   var moving = move(onePiece);
 
-  if (moving === true) {
-    // array[Math.floor(Math.random() * array.length)]
-    requestAnimationFrame(function() {
-      // set up a recursive loop (the function "drawingLoop" calls itself)
-      drawGame(array, onePiece);
-    });
+  if (moving === -1) {
+    console.log("YOU LOSE MUAHAHAHAHA");
   } else if (moving === false) {
     // check if there are things to be deleted
     // if so, increase number of lines
     // also increase points if there's time to do so
-    lines += deleteRow(lines);
-    console.log(lines, "this is the number of lines");
+    deleteRow();
 
     // redraw with
     requestAnimationFrame(function() {
@@ -362,7 +413,11 @@ function drawGame(array, onePiece) {
       drawGame(pieceArray, currentPiece);
     });
   } else {
-    console.log("YOU LOSE MUAHAHAHAHA");
+    // array[Math.floor(Math.random() * array.length)]
+    requestAnimationFrame(function() {
+      // set up a recursive loop (the function "drawingLoop" calls itself)
+      drawGame(array, onePiece);
+    });
   }
 }
 
@@ -401,6 +456,9 @@ document.onkeydown = function(event) {
         $(".c" + lastColumn + " .r" + Math.floor(currentPiece.row)).removeClass(
           "occupied"
         );
+        $(
+          ".c" + currentPiece.column + " .r" + Math.floor(currentPiece.row)
+        ).addClass("occupied");
       }
 
       break;
@@ -421,12 +479,24 @@ document.onkeydown = function(event) {
         $(".c" + lastColumn + " .r" + Math.floor(currentPiece.row)).removeClass(
           "occupied"
         );
+        if (
+          $(
+            ".c" +
+              currentPiece.column +
+              " .r" +
+              Math.floor(currentPiece.row + 1)
+          ).hasClass("occupied")
+        ) {
+          $(
+            ".c" + currentPiece.column + " .r" + Math.floor(currentPiece.row)
+          ).addClass("occupied");
+        }
       }
       break;
     case 40: // down arrow
       event.preventDefault();
       lastRow = currentPiece.row;
-      currentPiece.row += 1;
+      currentPiece.row += dropSpeed;
       $(".c" + currentPiece.column + " .r" + Math.floor(lastRow)).removeClass(
         "occupied"
       );
