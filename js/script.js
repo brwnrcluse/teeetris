@@ -361,36 +361,58 @@ function move(somePiece) {
     )
   ) {
     return -1;
-  } else if (somePiece.row <= 18) {
-    somePiece.row += dropRate;
-    var checker = Math.floor(somePiece.row);
+  } else if (
+    somePiece.row < 18 &&
+    !$(".c" + somePiece.column + " .r" + lastRow).hasClass("stable")
+  ) {
+    var tempNextRow = Math.floor(somePiece.row + 1);
 
-    if (checker > lastRow) {
-      if (!$(".c" + somePiece.column + " .r" + checker).hasClass("occupied")) {
-        $(".c" + somePiece.column + " .r" + lastRow).removeClass("occupied");
-        $(".c" + somePiece.column + " .r" + checker).addClass("occupied");
-      } else {
-        somePiece.row = lastRow;
-        $(".c" + somePiece.column + " .r" + lastRow).addClass(
-          "occupied stable"
-        );
-        return false;
-      }
-
-      if (checker == 18) {
-        somePiece.row = checker;
-        // $(".c" + somePiece.column + " .r" + lastRow).removeClass("occupied");
-        $(".c" + somePiece.column + " .r" + somePiece.row).addClass(
-          "occupied stable"
-        );
-        return false;
-      }
+    if ($(".c" + somePiece.column + " .r" + tempNextRow).hasClass("occupied")) {
+      $(".c" + somePiece.column + " .r" + lastRow).addClass("occupied stable");
+      return false;
     } else {
+      somePiece.row += dropRate;
+
+      var checker = Math.floor(somePiece.row);
+      $(".c" + somePiece.column + " .r" + lastRow).removeClass("occupied");
+      $(".c" + somePiece.column + " .r" + checker).addClass("occupied");
+
       return true;
     }
-
-    // return true;
+  } else if (somePiece.row >= 18) {
+    $(".c" + somePiece.column + " .r" + Math.floor(somePiece.row)).addClass(
+      "occupied"
+    );
+    return false;
   }
+  // if (checker > lastRow) {
+  //   if (
+  //     !$(".c" + somePiece.column + " .r" + checker).hasClass("occupied")
+  //   ) {
+  //     $(".c" + somePiece.column + " .r" + lastRow).removeClass("occupied");
+  //     $(".c" + somePiece.column + " .r" + checker).addClass("occupied");
+  //   } else {
+  //     somePiece.row = lastRow;
+  //     $(".c" + somePiece.column + " .r" + lastRow).addClass(
+  //       "occupied stable"
+  //     );
+  //     return false;
+  //   }
+
+  //   if (checker == 18) {
+  //     somePiece.row = checker;
+  //     // $(".c" + somePiece.column + " .r" + lastRow).removeClass("occupied");
+  //     $(".c" + somePiece.column + " .r" + somePiece.row).addClass(
+  //       "occupied stable"
+  //     );
+  //     return false;
+  //   }
+  // } else {
+  //   return true;
+  // }
+
+  return false;
+  // }
 }
 
 // *******************************************************
@@ -420,6 +442,29 @@ function chooseNext(array) {
 
 // *******************************************************
 // *******************************************************
+// *******************************************************
+
+var fullScreen = $("body");
+
+/* When the openFullscreen() function is executed, open the video in fullscreen.
+Note that we must include prefixes for different browsers, as they don't support the requestFullscreen method yet */
+function openFullscreen() {
+  if (fullScreen.requestFullscreen) {
+    fullScreen.requestFullscreen();
+  } else if (fullScreen.mozRequestFullScreen) {
+    /* Firefox */
+    fullScreen.mozRequestFullScreen();
+  } else if (fullScreen.webkitRequestFullscreen) {
+    /* Chrome, Safari and Opera */
+    fullScreen.webkitRequestFullscreen();
+  } else if (fullScreen.msRequestFullscreen) {
+    /* IE/Edge */
+    fullScreen.msRequestFullscreen();
+  }
+}
+
+// *******************************************************
+// *******************************************************
 // ******************     GAME     ***********************
 // *******************************************************
 // *******************************************************
@@ -430,7 +475,7 @@ function chooseNext(array) {
 // *******************************************************
 // *******************************************************
 
-$(".play button").click(function() {
+$(".play button").click(function(aVariable) {
   // clear occupied
   for (i = 1; i < 11; i++) {
     // this for loop searches all the rows in a column
@@ -442,7 +487,12 @@ $(".play button").click(function() {
     }
   }
 
-  //remove play-game
+  /* Get the element you want displayed in fullscreen mode (a video in this example): */
+  openFullscreen();
+
+  /* Get the element you want displayed in fullscreen mode (a video in this example): */
+
+  //start game
   drawGame(pieceArray, currentPiece);
 });
 
@@ -508,13 +558,32 @@ document.onkeydown = function(event) {
     case 37: // left arrow --> moves piece left
       event.preventDefault();
       lastColumn = currentPiece.column;
+
+      // move to the right if:
+      // - column to the right is unoccupied at the current row
+      // - not at right edge of game screen
+      tempNextColumn = currentPiece.column - 1;
+
       if (
+        $(
+          ".c" + tempNextColumn + " .r" + Math.floor(currentPiece.row)
+        ).hasClass("occupied") ||
+        lastColumn == 1
+      ) {
+        $(
+          ".c" + currentPiece.column + " .r" + Math.floor(currentPiece.row)
+        ).addClass("occupied stable");
+      } else if (
         !$(
-          ".c" + (lastColumn - 1) + " .r" + Math.floor(currentPiece.row)
+          ".c" + tempNextColumn + " .r" + Math.floor(currentPiece.row)
         ).hasClass("occupied") &&
         lastColumn > 1
       ) {
+        // move column
         currentPiece.column -= 1;
+
+        // add occupied to next column
+
         $(".c" + lastColumn + " .r" + Math.floor(currentPiece.row)).removeClass(
           "occupied"
         );
@@ -522,6 +591,23 @@ document.onkeydown = function(event) {
           ".c" + currentPiece.column + " .r" + Math.floor(currentPiece.row)
         ).addClass("occupied");
       }
+
+      // event.preventDefault();
+      //   lastColumn = currentPiece.column;
+      //   if (
+      //     !$(
+      //       ".c" + (lastColumn - 1) + " .r" + Math.floor(currentPiece.row)
+      //     ).hasClass("occupied") &&
+      //     lastColumn > 1
+      //   ) {
+      //     currentPiece.column -= 1;
+      //     $(".c" + lastColumn + " .r" + Math.floor(currentPiece.row)).removeClass(
+      //       "occupied"
+      //     );
+      //     $(
+      //       ".c" + currentPiece.column + " .r" + Math.floor(currentPiece.row)
+      //     ).addClass("occupied");
+      //   }
 
       break;
     // case 38: // up arrow --> rotates piece
@@ -531,29 +617,79 @@ document.onkeydown = function(event) {
     case 39: // right arrow --> moves piece right
       event.preventDefault();
       lastColumn = currentPiece.column;
+
+      // move to the right if:
+      // - column to the right is unoccupied at the current row
+      // - not at right edge of game screen
+      tempNextColumn = currentPiece.column + 1;
+
       if (
+        $(
+          ".c" + tempNextColumn + " .r" + Math.floor(currentPiece.row)
+        ).hasClass("occupied") ||
+        lastColumn == 10
+      ) {
+        $(
+          ".c" + currentPiece.column + " .r" + Math.floor(currentPiece.row)
+        ).addClass("occupied stable");
+      } else if (
         !$(
-          ".c" + (lastColumn + 1) + " .r" + Math.floor(currentPiece.row)
+          ".c" + tempNextColumn + " .r" + Math.floor(currentPiece.row)
         ).hasClass("occupied") &&
         lastColumn < 10
       ) {
+        // move column
         currentPiece.column += 1;
+
+        // add occupied to next column
+
         $(".c" + lastColumn + " .r" + Math.floor(currentPiece.row)).removeClass(
           "occupied"
         );
-        if (
-          $(
-            ".c" +
-              currentPiece.column +
-              " .r" +
-              Math.floor(currentPiece.row + 1)
-          ).hasClass("occupied")
-        ) {
-          $(
-            ".c" + currentPiece.column + " .r" + Math.floor(currentPiece.row)
-          ).addClass("occupied");
-        }
+        $(
+          ".c" + currentPiece.column + " .r" + Math.floor(currentPiece.row)
+        ).addClass("occupied");
+
+        // $(
+        //   ".c" + currentPiece.column + " .r" + Math.floor(currentPiece.row)
+        // ).addClass("occupied");
+
+        // // remove "occupied" from last column
+        // $(".c" + lastColumn + " .r" + Math.floor(currentPiece.row)).removeClass(
+        //   "occupied"
+        // );
       }
+
+      // else if (
+      //   currentPiece.column == 10 ||
+      //   !$(".c" + tempNextColumn + " .r" + currentPiece.row).hasClass("stable")
+      // ) {
+      //   $(".c" + currentPiece.column + " .r" + currentPiece.row).addClass(
+      //     "occupied stable"
+      //   );
+      // }
+
+      // else if (
+      //   !$(
+      //     ".c" + (lastColumn + 1) + " .r" + Math.floor(currentPiece.row)
+      //   ).hasClass("occupied") &&
+      //   lastColumn < 10
+      // ) {
+
+      //   // if the new column is occupied on the next row, add occupied
+      //   if (
+      //     $(
+      //       ".c" +
+      //         currentPiece.column +
+      //         " .r" +
+      //         Math.floor(currentPiece.row + 1)
+      //     ).hasClass("occupied")
+      //   ) {
+      //     $(
+      //       ".c" + currentPiece.column + " .r" + Math.floor(currentPiece.row)
+      //     ).addClass("occupied");
+      //   }
+      // }
       break;
     case 40: // down arrow
       event.preventDefault();
@@ -604,3 +740,27 @@ $(".game-end button").click(function() {
   // restart game
   drawGame(pieceArray, currentPiece);
 });
+
+tempNextColumn = currentPiece.column + 1;
+
+// if (
+//   currentPiece.column == 10 || !$(".c" + tempNextColumn + " .r" + currentPiece.row).hasClass("stable")
+// ) {
+//   $(".c" + currentPiece.column + " .r" + currentPiece.row).addClass("occupied stable");
+
+//   drawGame(pieceArray,currentPiece);
+
+//   } else {
+//     somePiece.column += 1;
+
+//     $(".c" + somePiece.column + " .r" + lastRow).removeClass("occupied");
+//     $(".c" + somePiece.column + " .r" + checker).addClass("occupied");
+
+//     return true;
+//   }
+// } else if (somePiece.row >= 18) {
+//   $(".c" + somePiece.column + " .r" + Math.floor(somePiece.row)).addClass(
+//     "occupied"
+//   );
+//   return false;
+// }
