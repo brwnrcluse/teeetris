@@ -178,6 +178,14 @@ var pieceArray = [Block];
 // *******************************************************
 // *******************************************************
 
+function speedUp(currentSpeed) {
+  currentSpeed += 0.05;
+}
+
+// *******************************************************
+// *******************************************************
+// *******************************************************
+
 function updateLines(newLines) {
   // retrieve currentLines from DOM
   var currentLines = Number($(".current-lines").html());
@@ -187,6 +195,9 @@ function updateLines(newLines) {
 
   // level depends on lines, so call updateLevel
   updateLevel(newLines);
+
+  // increase speed
+  speedUp(dropRate);
 
   // put sum back into DOM
   $(".current-lines").html(updatedLines);
@@ -732,16 +743,19 @@ $(".game-end button").click(function() {
     // "j" is a counter that moves from the deletedRow towards the topmost row (row 1)
     // if a row has class ".occupied", it removes the class from that row
     //      & adds it to the row below
-    for (j = 1; j < 19; j++) {
-      $(".c" + i + " .r" + j).removeClass("occupied");
+    for (j = 0; j < 19; j++) {
+      $(".c" + i + " .r" + j).removeClass("occupied stable");
     }
   }
+
+  var nextPiece = chooseNext(pieceArray);
+  currentPiece = nextPiece;
 
   // restart game
   drawGame(pieceArray, currentPiece);
 });
 
-tempNextColumn = currentPiece.column + 1;
+// tempNextColumn = currentPiece.column + 1;
 
 // if (
 //   currentPiece.column == 10 || !$(".c" + tempNextColumn + " .r" + currentPiece.row).hasClass("stable")

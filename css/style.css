@@ -201,8 +201,10 @@ h2 {
   font-family: "Impact\ Label\ Reversed";
   margin: 25px 0 5px 0;
   font-size: 48px;
+  padding: 50px;
 }
 
 h2 > button {
   font-size: 36px;
+  width: 60%;
 }
