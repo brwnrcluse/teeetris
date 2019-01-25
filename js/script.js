@@ -25,18 +25,18 @@
 //
 //
 
-class gameBoard {
-  constructor() {
-    this.piece = new Piece();
-    this.square = new Square();
-    this.checkIfEmpty = function() {
-      // checkIfEmpty
-    };
-    this.clearRow = function() {
-      // clearRow (here? or as a separate function?)
-    };
-  }
-}
+// class gameBoard {
+//   constructor() {
+//     this.piece = new Piece();
+//     this.square = new Square();
+//     this.checkIfEmpty = function() {
+//       // checkIfEmpty
+//     };
+//     this.clearRow = function() {
+//       // clearRow (here? or as a separate function?)
+//     };
+//   }
+// }
 
 // board size: 18 rows, 10 columns
 // each square has two states: occupied or unoccupied
@@ -47,35 +47,36 @@ class gameBoard {
 //   fillState: false
 // };
 
-var c1 = [];
-var c2 = [];
-var c3 = [];
-var c4 = [];
-var c5 = [];
-var c6 = [];
-var c7 = [];
-var c8 = [];
-var c9 = [];
-var c10 = [];
+// var c1 = [];
+// var c2 = [];
+// var c3 = [];
+// var c4 = [];
+// var c5 = [];
+// var c6 = [];
+// var c7 = [];
+// var c8 = [];
+// var c9 = [];
+// var c10 = [];
 
-c1.push($(".c1 .square"));
-c2.push($(".c2 .square"));
-c3.push($(".c3 .square"));
-c4.push($(".c4 .square"));
-c5.push($(".c5 .square"));
-c6.push($(".c6 .square"));
-c7.push($(".c7 .square"));
-c8.push($(".c8 .square"));
-c9.push($(".c9 .square"));
-c10.push($(".c10 .square"));
+// c1.push($(".c1 .square"));
+// c2.push($(".c2 .square"));
+// c3.push($(".c3 .square"));
+// c4.push($(".c4 .square"));
+// c5.push($(".c5 .square"));
+// c6.push($(".c6 .square"));
+// c7.push($(".c7 .square"));
+// c8.push($(".c8 .square"));
+// c9.push($(".c9 .square"));
+// c10.push($(".c10 .square"));
 
 var c4r1 = $(".c4 .r1");
+var c5r1 = $(".c5 .r1");
 
 // if ($(".c4 .r1").hasClass("square") == true) {
 //   console.log("yeah biiiiih");
 // }
 
-var board = [c1, c2, c3, c4, c5, c6, c7, c8, c9, c10];
+// var board = [c1, c2, c3, c4, c5, c6, c7, c8, c9, c10];
 
 //
 //
@@ -95,6 +96,12 @@ var board = [c1, c2, c3, c4, c5, c6, c7, c8, c9, c10];
 // drop     -> the natural gameflow, also can be sped up if the user presses the down arrow
 // fullDrop -> to drop a piece all the way
 // detect   -> to detect a) possibility to rotate & b) how to stay stable
+
+// *******************************************************
+// *******************************************************
+// ******************     CLASSES     ********************
+// *******************************************************
+// *******************************************************
 
 class Block {
   constructor() {
@@ -117,40 +124,59 @@ class Block {
   }
 }
 
+// class Line extends Block {
+//   constructor() {}
+// }
+
+// class L1Piece {
+//   constructor() {}
+// }
+
+// class L2Piece {
+//   constructor() {}
+// }
+
+// class BoxPiece {
+//   constructor() {}
+// }
+
+// class TPiece {
+//   constructor() {}
+// }
+// class Z1Piece {
+//   constructor() {}
+// }
+// class Z2Piece {
+//   constructor() {}
+// }
+
+// *******************************************************
+// *******************************************************
+// ******************     VARIABLES     ******************
+// *******************************************************
+// *******************************************************
+
+var dropRate = 0.15;
 var block = new Block();
+var currentPiece = block;
+var pieceArray = [Block];
 
-class Line extends Block {
-  constructor() {}
-}
-
-class L1Piece {
-  constructor() {}
-}
-
-class L2Piece {
-  constructor() {}
-}
-
-class BoxPiece {
-  constructor() {}
-}
-
-class TPiece {
-  constructor() {}
-}
-class Weird1Piece {
-  constructor() {}
-}
-class Weird2Piece {
-  constructor() {}
-}
-
-// FUNCTIONS
+// *******************************************************
+// *******************************************************
+// ******************     FUNCTIONS     ******************
+// *******************************************************
+// *******************************************************
 //
-// chooseNext -> to randomly select the next piece
-// deleteRow  -> to delete a full row from the board
-// points     -> to reward the player for the manner in which they complete rows
-// dropRate   -> controls the speed at which a piece drops, based on player's performance
+// chooseNext  -> to randomly select the next piece
+// deleteRow   -> to delete a full row from the board
+// updateLines -> shows number of completed lines in DOM
+// updateScore -> shows current score in DOM
+// updateLevel -> shows current level in DOM
+// dropRate    -> controls the speed at which a piece drops, based on player's performance
+//
+// *******************************************************
+// *******************************************************
+// *******************************************************
 
 function updateLines(newLines) {
   // retrieve currentLines from DOM
@@ -160,16 +186,20 @@ function updateLines(newLines) {
   var updatedLines = currentLines + newLines;
 
   // level depends on lines, so call updateLevel
-  updateLevel(updatedLines);
+  updateLevel(newLines);
 
   // put sum back into DOM
   $(".current-lines").html(updatedLines);
 }
 
-function updateScore(newLines) {
+// *******************************************************
+// *******************************************************
+// *******************************************************
+
+function updateScore(numberOfLines) {
   var newPoints = 0;
   // translate newLines to points
-  switch (newLines) {
+  switch (numberOfLines) {
     case 1:
       newPoints = 40;
       break;
@@ -194,13 +224,21 @@ function updateScore(newLines) {
   $(".current-score").html(updatedScore);
 }
 
+// *******************************************************
+// *******************************************************
+// *******************************************************
+
 function updateLevel(totalLines) {
   // level updates every 10 completed lines
-  currentLevel = Math.floor(totalLines / 10);
+  var currentLevel = Math.floor(totalLines / 10) + 1;
 
   // put currentLevel into DOM
   $(".current-level").html(currentLevel);
 }
+
+// *******************************************************
+// *******************************************************
+// *******************************************************
 
 function deleteRow() {
   // deleteRow  -> to delete a full row from the board
@@ -248,7 +286,6 @@ function deleteRow() {
 
   // check how many of the squares in each row are occupied
   // first, take one row
-  // pass in numberOfLines -- the score counter that is incremented in the DOM each time a line is filled
   allRows.forEach(function(oneRow) {
     // an array full of jQuery elements within the row that are occupied
     var isOccupied = oneRow.filter(".occupied");
@@ -279,15 +316,23 @@ function deleteRow() {
       shiftRows(deletedRow);
     }
     updateLines(lineCounter);
+    updateScore(lineCounter);
   });
 }
+
+// *******************************************************
+// *******************************************************
+// *******************************************************
 
 function shiftRows(deletedRowNumber) {
   console.log(deletedRowNumber, "shifting rows");
 
   // for loop to handle rows
   for (i = 1; i < 11; i++) {
-    // for loop to handle rows column-by-column
+    // this for loop searches all the rows in a column
+    // "j" is a counter that moves from the deletedRow towards the topmost row (row 1)
+    // if a row has class ".occupied", it removes the class from that row
+    //      & adds it to the row below
     for (j = deletedRowNumber; j > 1; j--) {
       if ($(".c" + i + " .r" + (j - 1)).hasClass("occupied")) {
         $(".c" + i + " .r" + (j - 1)).removeClass("occupied");
@@ -297,12 +342,9 @@ function shiftRows(deletedRowNumber) {
   }
 }
 
-// function points() {
-//   // points     -> to reward the player for the manner in which they complete rows
-//   console.log("points in da houuuuuuuuuse");
-// }
-
-var dropSpeed = 0.3;
+// *******************************************************
+// *******************************************************
+// *******************************************************
 
 function move(somePiece) {
   // controls the speed at which a piece drops, based on player's performance
@@ -320,7 +362,7 @@ function move(somePiece) {
   ) {
     return -1;
   } else if (somePiece.row <= 18) {
-    somePiece.row += dropSpeed;
+    somePiece.row += dropRate;
     var checker = Math.floor(somePiece.row);
 
     if (checker > lastRow) {
@@ -351,20 +393,22 @@ function move(somePiece) {
   }
 }
 
-function redraw() {
-  $(".square").removeClass("occupied");
+// *******************************************************
+// *******************************************************
+// *******************************************************
 
-  if ($(".rest")) {
-    $(".rest").addClass("occupied");
-    return;
-  }
-}
+// function redraw() {
+//   $(".square").removeClass("occupied");
 
-// GAME
-//
-// drawGame   -> function to run the gameloop until the end condition is reached
+//   if ($(".rest")) {
+//     $(".rest").addClass("occupied");
+//     return;
+//   }
+// }
 
-var pieceArray = [Block];
+// *******************************************************
+// *******************************************************
+// *******************************************************
 
 function chooseNext(array) {
   var randomPiece = array[Math.floor(Math.random() * array.length)];
@@ -374,17 +418,37 @@ function chooseNext(array) {
   return nextPiece;
 }
 
-///////////////////
-///////////////////
-///////////////////
-///////////////////
-///////////////////
-///////////////////
-///////////////////
+// *******************************************************
+// *******************************************************
+// ******************     GAME     ***********************
+// *******************************************************
+// *******************************************************
+//
+// drawGame   -> function to run the gameloop until the end condition is reached
+//
+// *******************************************************
+// *******************************************************
+// *******************************************************
 
-var currentPiece = block;
+$(".play button").click(function() {
+  // clear occupied
+  for (i = 1; i < 11; i++) {
+    // this for loop searches all the rows in a column
+    // "j" is a counter that moves from the deletedRow towards the topmost row (row 1)
+    // if a row has class ".occupied", it removes the class from that row
+    //      & adds it to the row below
+    for (j = 1; j < 19; j++) {
+      $(".c" + i + " .r" + j).removeClass("occupied");
+    }
+  }
 
-drawGame(pieceArray, currentPiece);
+  //remove play-game
+  drawGame(pieceArray, currentPiece);
+});
+
+// *******************************************************
+// *******************************************************
+// *******************************************************
 
 function drawGame(array, onePiece) {
   // drawGame   -> function to run the gameloop until the end condition is reached
@@ -396,6 +460,7 @@ function drawGame(array, onePiece) {
   var moving = move(onePiece);
 
   if (moving === -1) {
+    $(".game-end").addClass("showing");
     console.log("YOU LOSE MUAHAHAHAHA");
   } else if (moving === false) {
     // check if there are things to be deleted
@@ -421,22 +486,19 @@ function drawGame(array, onePiece) {
   }
 }
 
-///////////////////
-///////////////////
-///////////////////
-///////////////////
-///////////////////
-///////////////////
-///////////////////
-///////////////////
-
+// *******************************************************
+// *******************************************************
+// ******************     PLAYER INPUT     ***************
+// *******************************************************
+// *******************************************************
+//
 // taking player input
 //
-//
-document.onkeydown = function(event) {
-  console.log("coucou KEY DOWN" + event.keyCode);
-  console.log(event);
+// *******************************************************
+// *******************************************************
+// *******************************************************
 
+document.onkeydown = function(event) {
   var lastColumn = 0;
   var lastRow = 0;
 
@@ -495,12 +557,50 @@ document.onkeydown = function(event) {
       break;
     case 40: // down arrow
       event.preventDefault();
-      lastRow = currentPiece.row;
-      currentPiece.row += dropSpeed;
+      nextRow = Math.floor(currentPiece.row);
+
+      if (
+        !$(".c" + currentPiece.column + " .r" + nextRow).hasClass("occupied") &&
+        lastColumn < 10
+      )
+        currentPiece.row += dropRate;
       $(".c" + currentPiece.column + " .r" + Math.floor(lastRow)).removeClass(
         "occupied"
       );
+      $(
+        ".c" + currentPiece.column + " .r" + Math.floor(currentPiece.row)
+      ).addClass("occupied");
 
       break;
   }
 };
+
+// *******************************************************
+// *******************************************************
+// ******************     GAME OVER     ***************
+// *******************************************************
+// *******************************************************
+//
+//
+// *******************************************************
+// *******************************************************
+// *******************************************************
+
+$(".game-end button").click(function() {
+  //remove game-end popup
+  $(".game-end").removeClass("showing");
+
+  // clear occupied
+  for (i = 1; i < 11; i++) {
+    // this for loop searches all the rows in a column
+    // "j" is a counter that moves from the deletedRow towards the topmost row (row 1)
+    // if a row has class ".occupied", it removes the class from that row
+    //      & adds it to the row below
+    for (j = 1; j < 19; j++) {
+      $(".c" + i + " .r" + j).removeClass("occupied");
+    }
+  }
+
+  // restart game
+  drawGame(pieceArray, currentPiece);
+});

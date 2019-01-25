@@ -1,3 +1,18 @@
+@font-face {
+  font-family: "Harbour-Bold";
+  src: url("../fonts/Harbour-Bold.ttf");
+}
+
+@font-face {
+  font-family: "HUGE-AvantGarde-Bold";
+  src: url("../fonts/HUGE-AvantGarde-Bold.ttf");
+}
+
+@font-face {
+  font-family: "Impact\ Label\ Reversed";
+  src: url("../fonts/Impact\ Label\ Reversed.ttf");
+}
+
 /* pieces -- transparent with white outline */
 body {
   background-color: black;
@@ -7,15 +22,8 @@ body {
     Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
-section {
-  /* background-color: black; */
-  border: 5px solid blue;
-  height: 80vh;
-  color: white;
-}
-
 .game-screen {
-  border: 1px solid orange;
+  margin: 0 5%;
   color: white;
   flex-direction: row;
   display: flex;
@@ -25,8 +33,8 @@ section {
 .game-board,
 .support-info {
   display: flex;
-  justify-content: center;
-  border: 3px solid green;
+  background-color: rgba(255, 255, 255, 0.02);
+  justify-content: flex-start;
   color: white;
   width: 100%;
   margin: 25px;
@@ -37,25 +45,40 @@ section {
 }
 
 .game-board {
-  flex-direction: row;
-  align-items: flex-start;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-/* .game-canvas {
+.play-game {
+  width: 250px;
+  background-color: transparent;
+  border: none;
+  color: white;
+  font-size: 48px;
+  font-family: "Impact\ Label\ Reversed";
+}
+
+.play-game:hover {
+  border: 1px solid red;
+  color: red;
+}
+
+.game-canvas {
   display: flex;
   align-items: flex-start;
   flex-direction: row;
-  border: 1px solid white;
-  height: 90%;
-  width: 40%;
-} */
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+}
 
 .next-piece,
 .game-info {
-  border: 1px solid orange;
   color: white;
   height: 100%;
-  margin: 25px;
+  /* margin: 25px; */
+  /* border: 1px solid white; */
 }
 
 .game-info {
@@ -71,7 +94,15 @@ section {
   justify-content: space-evenly;
   align-items: center;
   height: 100%;
-  border: 1px solid tomato;
+  /* border: 1px solid white; */
+  font-size: 60px;
+}
+
+.current-level,
+.current-score,
+.current-lines {
+  font-size: 48px;
+  font-weight: bold;
 }
 
 .c1,
@@ -84,23 +115,94 @@ section {
 .c8,
 .c9,
 .c10 {
-  height: 4%;
-  width: 4.5%;
+  height: 5.55%;
+  width: 10%;
 }
 
 .square {
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  /* border: 1px solid rgba(255, 255, 255, 0.5); */
   height: 100%;
   width: 100%;
-  background-color: orange;
+  background-color: transparent;
 }
 
 .occupied {
-  background-color: white;
+  background-color: rgb(196, 0, 0);
   height: 100%;
   width: 100%;
 }
 
 .test {
   background-color: transparent;
+}
+
+.game-end {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* the 4th arg in rgba controls the transparency
+   (0 = transparent, 1 = opaque) */
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.showing {
+  display: flex;
+}
+
+.popup-content {
+  opacity: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  height: 50%;
+  text-align: center;
+  background-color: black;
+  color: white;
+  border-radius: 4px;
+  border: 1px solid white;
+}
+
+.showing > .popup-content {
+  animation: 1s bouncy cubic-bezier(0, 1.43, 0.99, 1.63) forwards;
+  animation-delay: 1s;
+}
+
+@keyframes bouncy {
+  0% {
+    width: 30%;
+    height: 30%;
+  }
+
+  100% {
+    opacity: 1;
+    width: 50%;
+    height: 50%;
+  }
+}
+
+.whole-screen {
+  height: 80vh;
+  color: white;
+}
+
+h1 {
+  font-family: "Impact\ Label\ Reversed";
+  margin: 25px 0 5px 0;
+  font-size: 48px;
+}
+
+h2 {
+  font-family: "Impact\ Label\ Reversed";
+  margin: 25px 0 5px 0;
+  font-size: 48px;
+}
+
+h2 > button {
+  font-size: 36px;
 }
